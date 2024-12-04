@@ -22,13 +22,13 @@ else:
     q = pickle.load(f)
     f.close()
 
-episodes = 100
+episodes = 1000
 max_steps = 100
 alpha = 0.9
 gamma = 0.9
 
 
-epsilon =200
+epsilon =1
 epsilon_decay_rate = 2 / episodes
 rng = np.random.default_rng()
 rewards_per_episode = np.zeros(episodes)
@@ -58,6 +58,7 @@ for a in range(episodes):
         new_theta, reward, done, info = env.step(action)
         ep_reward += reward
         distance_error = info['distance_error']
+        current_position=info['current_position']
         new_state = convert_state((new_theta[2], new_theta[3]))
 
         current_q=q[state+(action,)]
@@ -70,14 +71,22 @@ for a in range(episodes):
 
         #print("Q Table là",q)
         if distance_error < epsilon:
-            print("giá trị theta là ",theta)
+            print("gia trí position",current_position)
+
             print("Đã chạm tới đích tại eps={},steps={}".format(a,b))
             print("giá trị distance: ",distance_error)
             done=True
             print ("giá trị theta={},action={}".format(new_theta,action))
-        # if distance_error>epsilon:
-        #     print("Chưa tới")
+
         if training:
             f = open('gym_robot_arm:robot-arm-v0.pkl', 'wb')
             pickle.dump(q, f)
             f.close()
+
+
+
+
+
+
+
+
