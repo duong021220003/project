@@ -1,0 +1,5 @@
+gym~=0.26.2
+setuptools~=75.1.0
+numpy~=1.26.4
+pygame~=2.6.1
+scipy~=1.14.1
