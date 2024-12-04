@@ -10,7 +10,7 @@ q_table_segment_size = (max_theta - min_theta) / q_table_size
 
 def convert_state(real_state):
     q_state = np.floor((real_state - min_theta) / q_table_segment_size).astype(int)
-    q_state = np.clip(q_state, 0, np.array(q_table_size) - 1)  # Ensure it's within bounds
+    q_state = np.clip(q_state, 0, np.array(q_table_size) - 1)  #
     return tuple(q_state)
 
 
@@ -40,27 +40,27 @@ for i in range(episodes):
     for _ in range(max_steps):
 
 
+        if training:
+            if rng.random() < epsilon:
+                action = env.action_space.sample()
+            else:
+                action = np.argmax(q[state])
+
+            if not training:
+                action = np.argmax(q[state])
+        action_list.append(action)
         new_theta, reward, done, info = env.step(action)
         ep_reward += reward
         distance_error = info['distance_error']
-
-
+        new_state = convert_state((new_theta[2], new_theta[3]))
+        q[state][action] += alpha * (
+                reward + gamma * np.max(q[new_state]) - q[state][action]
+        )
+        state = new_state
+        ep_reward += reward
         if done:
             if distance_error < 0.1:
-                print("Đã chạm tới đích,")
-        else:
-            if training:
-                if rng.random() < epsilon:
-                    action = env.action_space.sample()
-                else:
-                    action = np.argmax(q[state])
+             print("Đã chạm tới đích,")
+    env.close()
 
-                if not training:
-                    action = np.argmax(q[state])
-            action_list.append(action)
-            new_state = convert_state((new_theta[2], new_theta[3]))
-            q[state][action] += alpha * (
-                    reward + gamma * np.max(q[new_state]) - q[state][action]
-            )
-            state = new_state
 
